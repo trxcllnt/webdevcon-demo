@@ -1,0 +1,40 @@
+{
+  "name": "webdevcon-demo",
+  "version": "1.0.0",
+  "description": "",
+  "main": "src/server/index.js",
+  "scripts": {
+    "test": "rm -rf test/build && node tool/test",
+    "mwb": "mwb",
+    "dev": "npm run clean && node tool/dev",
+    "devA": "npm run clean && npm run cleanCordova && node tool/dev all",
+    "devC": "npm run cleanCordova && node tool/dev cordovaOnly",
+    "serve": "node build/server",
+    "build": "npm run clean && node tool/build",
+    "debug": "node --debug build/server",
+    "buildA": "npm run clean && npm run cleanCordova && node tool/build all",
+    "buildC": "npm run cleanCordova && node tool/build cordovaOnly",
+    "bundle": "npm run build && npm shrinkwrap && tar -cvjf bundle.tar.bz2 npm-shrinkwrap.json build",
+    "clean": "rm -rf build",
+    "cleanCordova": "rm -rf cordova/www/build"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "mwb": "0.0.18"
+  },
+  "dependencies": {
+    "body-parser": "~1.15.0",
+    "compression": "~1.6.1",
+    "cookie-parser": "~1.4.1",
+    "express": "~4.13.4",
+    "falcor-express": "~0.1.2",
+    "falcor-http-datasource": "~0.1.3",
+    "reaxtor": "github:trxcllnt/reaxtor",
+    "request": "~2.72.0",
+    "snabbdom": "~0.4.2",
+    "snabbdom-to-html": "~2.1.3",
+    "source-map-support": "~0.4.0"
+  }
+}

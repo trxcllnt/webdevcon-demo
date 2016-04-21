@@ -1,0 +1,66 @@
+body, ul, li {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.app {
+    width: 615px;
+    margin-left: auto;
+    margin-right: auto;
+    position: relative;
+}
+
+.episodes {
+    width: 100%;
+    height: 668px;
+    position: absolute;
+}
+
+.episodesScroller {
+    width: 100%;
+    height: 600px;
+    overflow: auto;
+    position: absolute;
+    transform-style: preserve-3d;
+}
+
+.episodesListContainer {
+    width: 600px;
+    position: absolute;
+}
+
+.episodesList {
+    width: 600px;
+    font-size: 0;
+    display: inline;
+    position: absolute;
+    text-align: justify;
+}
+
+.episode {
+    width: 280px;
+    height: 180px;
+    margin: 8px 8px;
+    font-size: 14px;
+    display: inline-block;
+    position: relative;
+}
+
+.episode img {
+    width: 280px;
+    height: 180px;
+    position: absolute;
+    background-color: #cccccc;
+}
+
+.episode span {
+    font-size: 2em;
+    top: 8px;
+    left: 8px;
+    right: 8px;
+    text-align: left;
+    position: absolute;
+    font-family: sans-serif;
+    background-color: rgba(255, 255, 255, 0.6)
+}
