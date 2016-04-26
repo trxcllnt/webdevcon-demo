@@ -16,30 +16,30 @@ import 'rxjs/add/operator/auditTime';
 import { Observable } from 'rxjs/Observable';
 
 export class Episodes extends Container {
-    constructor(models) {
+    constructor(props, createChild) {
         super({
-            models,
+            ...props,
             listHeight: 600,
             virtualOffset: 0,
             start: 0, end: 0,
-            width: 600, height: 600 });
+            width: 600, height: 600 }, createChild);
     }
-    loader([ model ]) {
-        return model.getItems(
-                () =>   [['scrollTop'], ['length']],
-                (xs) => getEpisodePaths.call(this, xs)
-            );
-    }
-    deref(subjects, children, [ model, state ]) {
-        return super.deref(subjects, children, [ model, state ], {
+    deref(subjects, children, model, state) {
+        return super.deref(subjects, children, model, state, {
             to: this.end,
             from: this.start
         });
     }
-    createChild(childUpdates, childState, childIndex) {
-        return new Episode(childUpdates);
+    createChild(models, index, state) {
+        return new Episode({ models, index });
     }
-    events([ model, state ]) {
+    loadProps(model) {
+        return model.getItems(
+            () =>   [['scrollTop'], ['length']],
+            (xs) => getEpisodePaths.call(this, xs)
+        );
+    }
+    loadState(model, props) {
         return this
             .listen('scroll-episodes')
             .auditTime(10)
@@ -47,11 +47,9 @@ export class Episodes extends Container {
                 (ev) => model.set({ json: {
                     scrollTop: ev.target.scrollTop
                 }}),
-                (ev, { json }) => ({ ...state, ...json })
-            )
-            .map((newState) => [ model, state = newState ])
+                (ev, { json }) => json)
     }
-    render([[ model, { scrollTop = 0 } ], ...episodes]) {
+    render(model, { scrollTop = 0 }, ...episodes) {
         return (
             <section key='episodes' className={episodesClassName}>
                 <h2>Episodes</h2>
@@ -78,14 +76,14 @@ export class Episodes extends Container {
 }
 
 class Episode extends Component {
-    loader([ model ]) {
+    loadProps(model) {
         return model.get(`[
             'date', 'number',
             'title', 'description',
             'image_url', 'podcast_url'
         ]`);
     }
-    render([model, state]) {
+    render(model, state) {
         const { date, number,
                 title, description,
                 image_url, podcast_url } = state;

@@ -7,21 +7,23 @@ import { app as appClassName } from './styles.css';
 import { Episodes } from './Episodes';
 
 export class App extends Component {
-    createChildren(models) {
+    initialize(models) {
 
-        const episodes = new Episodes(models.deref(`episodes`));
+        const episodes = new Episodes({
+            models: models.deref(`episodes`)
+        });
 
         return models.switchMap(
             (tuple) => episodes,
-            (tuple, episodesVDom) => [tuple, episodesVDom]
+            (tuple, episodesVDom) => [...tuple, episodesVDom]
         );
     }
-    loader([model]) {
+    loadProps(model) {
         return model.get(
             `episodes['length', 'scrollTop']`,
         );
     }
-    render([[model, state], episodes]) {
+    render(model, state, ...episodes) {
         return (
             <article id='app' key='app' className={appClassName}>
                 {episodes}
