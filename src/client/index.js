@@ -1,17 +1,28 @@
 require('source-map-support').install();
 
-import { Model } from 'reaxtor';
-import { Scheduler } from 'rxjs/Rx';
+import { Model, reaxtor } from 'reaxtor';
+import { Observable, Scheduler } from 'rxjs/Rx';
 import { render as renderVDom } from './render';
-import { renderApp } from '../shared/renderApp';
 import { reloadHotModules } from '../shared/reloadHot';
+
+import { decode } from 'querystring';
 import DataSource from 'falcor-http-datasource';
 
 const useLocalStorage = false;
+const localStorageToken = 'podcast-app-cache';
 
-renderApp(reloadHotModules(module),
-          getAppModel, renderVDom,
-          getAppDOMNode()).subscribe();
+Observable
+    .fromEvent(window, 'load', () => window.location.search.substring(1))
+    .map((query) => decode(query))
+    .switchMap(
+        (params) => reloadHotModules(module),
+        (params, { App }) => reaxtor(
+            App, getAppModel(), params
+        )
+    )
+    .switch()
+    .scan(renderVDom, getAppDOMNode())
+    .subscribe();
 
 function getAppDOMNode(appDomNode) {
     return appDomNode = (
@@ -32,7 +43,7 @@ function getAppModel() {
         onChangesCompleted: function () {
             useLocalStorage &&
             localStorage && localStorage.setItem && localStorage.setItem(
-                'podcast-app-cache', JSON.stringify(this.getCache())
+                localStorageToken, JSON.stringify(this.getCache())
             );
         }
     });
@@ -46,7 +57,7 @@ function getAppCache() {
         appCache = window.seedAppCache;
         delete window.seedAppCache;
     } else if (useLocalStorage && localStorage && localStorage.getItem) {
-        const localStorageCache = localStorage.getItem('podcast-app-cache');
+        const localStorageCache = localStorage.getItem(localStorageToken);
         if (localStorageCache) {
             try {
                 appCache = JSON.parse(localStorageCache);

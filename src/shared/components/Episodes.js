@@ -1,6 +1,6 @@
 /** @jsx hJSX */
-import { hJSX, Container, Component } from 'reaxtor';
-import { episode as episodeClassName } from './styles.css';
+import { Episode } from './Episode';
+import { hJSX, Container } from 'reaxtor';
 import { episodes as episodesClassName } from './styles.css';
 import { episodesList as episodesListClassName } from './styles.css';
 import { episodesScroller as episodesScrollerClassName } from './styles.css';
@@ -56,9 +56,11 @@ export class Episodes extends Container {
                 <div key='episodes-scroller'
                      className={episodesScrollerClassName}
                      on-scroll={this.dispatch('scroll-episodes')}
-                     hook={{ insert(vnode) {
-                        vnode.elm.scrollTop = scrollTop;
-                     }}}>
+                     hook={{
+                        insert(vnode) {
+                            vnode.elm.scrollTop = scrollTop;
+                         }
+                    }}>
                     <div key='episodes-container'
                          style={{ height: `${this.listHeight}px` }}
                          className={episodesListContainerClassName}>
@@ -71,27 +73,6 @@ export class Episodes extends Container {
                     </div>
                 </div>
             </section>
-        );
-    }
-}
-
-class Episode extends Component {
-    loadProps(model) {
-        return model.get(`[
-            'date', 'number',
-            'title', 'description',
-            'image_url', 'podcast_url'
-        ]`);
-    }
-    render(model, state) {
-        const { date, number,
-                title, description,
-                image_url, podcast_url } = state;
-        return (
-            <li className={episodeClassName}>
-                <img src={image_url}/>
-                <span>{title}</span>
-            </li>
         );
     }
 }

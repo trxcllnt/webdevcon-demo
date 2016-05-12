@@ -7,12 +7,11 @@ import snabbdomAttributes from 'snabbdom-to-html/lib/modules/attributes';
 
 import 'rxjs/add/observable/of';
 import 'rxjs/add/operator/take';
-import 'rxjs/add/operator/takeLast';
+import 'rxjs/add/operator/debounceTime';
 import { Observable } from 'rxjs/Observable';
 
 import { inspect } from 'util';
-import { Model } from 'reaxtor';
-import { renderApp } from '../../shared/renderApp';
+import { Model, reaxtor } from 'reaxtor';
 import { getDataSourceFactory } from './router';
 
 const toHTML = init([
@@ -36,10 +35,14 @@ export function renderMiddleware(users = {}, hotModules) {
 
         const htmlObs = !renderServerSide ?
             Observable.of(renderVDomToHTMLPage(null, [])) :
-            renderApp(hotModules, getModel, renderVDomToHTMLPage);
+            hotModules.switchMap(({ App }) => reaxtor(
+                App, getModel(), {...req.cookies, ...req.query}
+            ))
+            .scan(renderVDomToHTMLPage, {})
+            .debounceTime(16);
 
-        htmlObs.take(1).takeLast(1).subscribe(
-            (html) => res.type('html').send( html ),
+        htmlObs.take(1).subscribe(
+            (html) => res.type('html').send(html),
             (error) => {
 
                 error = error && error.stack ?

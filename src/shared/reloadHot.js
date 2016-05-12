@@ -6,7 +6,11 @@ export function reloadHotModules(module) {
     const hotModules = new BehaviorSubject({ App });
 
     if (module.hot) {
-        module.hot.accept('../shared/components/App', () => {
+        module.hot.accept([
+            '../shared/components/App.js',
+            '../shared/components/Episodes.js',
+            '../shared/components/styles.css',
+        ], () => {
             hotModules.next({
                 App: require('../shared/components/App')
             });
